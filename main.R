@@ -18,7 +18,13 @@
 #' less_than_zero(c(-1,0,1,2,3,4))
 #' [1] TRUE FALSE FALSE FALSE FALSE FALSE
 less_than_zero <- function(x) {
-    return(NULL)
+  # create a vector to store the booleans
+  booleans <- vector(length = length(x))
+  # for each item in vector x, store its boolean result
+  for (i in 1:length(x)) {
+    booleans[i] = x[i]<0
+  }
+  return(booleans)
 }
 
 #' Evaluate whether the argument is between two numbers
@@ -44,8 +50,16 @@ less_than_zero <- function(x) {
 #' [2,]  TRUE FALSE FALSE
 #' [3,] FALSE FALSE FALSE
 is_between <- function(x, a, b) {
-    return(NULL)
+  # for each index in x
+  for (i in 1:length(x)) {
+    # set item equal to result of logical operators
+    # saves result as 0 or 1
+    x[i] <-  (x[i] > a) && (x[i] < b)
+  }
+  # return x as booleans
+  return(as.logical(x))
 }
+
 
 #' Return the values of the input vector that are not NA
 #'
@@ -61,7 +75,9 @@ is_between <- function(x, a, b) {
 #' rm_na(x)
 #' [1] 1 2 3
 rm_na <- function(x) {
-    return(NULL)
+  # x_no_na stores values of x that are not equal to NA
+  x_no_na <- x[!is.na(x)]
+  return(x_no_na)
 }
 
 #' Calculate the median of each row of a matrix
@@ -80,7 +96,14 @@ rm_na <- function(x) {
 #' [1] 1 4 7
 #' 
 row_medians <- function(x) {
-    return(NULL)
+  # create vector to store medians
+  medians <- c()
+  # iterate through rows in matrix
+  for (row in 1:nrow(x)) {
+  # save median of each row to vector
+    medians[row] = median(x[row, ])
+  }
+  return(medians)
 }
 
 #' Evaluate each row of a matrix with a provided function
@@ -105,7 +128,20 @@ row_medians <- function(x) {
 #' summarize_rows(m, mean)
 #' [1] 2 5 8
 summarize_rows <- function(x, fn, na.rm=FALSE) {
-    return(NULL)
+  # create vector to store values
+  summary <- c()
+  # iterate through rows in matrix
+  for (row in 1:nrow(x)) {
+    # store each row in a vector
+    row_values <- x[row, ]
+    # filter if NA should be removed
+    if (na.rm) {
+      row_values <- rm_na(row_values)
+    }
+    # run fn function on each row and save value to summary
+    summary[row] = fn(row_values)
+  }
+  return(summary)
 }
 
 #' Summarize matrix rows into data frame
@@ -145,22 +181,78 @@ summarize_rows <- function(x, fn, na.rm=FALSE) {
 #' 3 -0.09040182 1.027559 -0.02774705 -3.026888 2.353087      130              54      0
 #' 4  0.09518138 1.030461  0.11294781 -3.409049 2.544992       90              72      0
 summarize_matrix <- function(x, na.rm=FALSE) {
-    return(NULL)
+  # store data frame cols as vectors with nrow spaces
+  mean_values <- c(nrow(x))
+  stdev_values <- c(nrow(x))
+  median_values <- c(nrow(x))
+  min_values <- c(nrow(x))
+  max_values <- c(nrow(x))
+  num_lt_0_values <- c(nrow(x))
+  num_btw_1_and_5_values <- c(nrow(x))
+  num_na_values <- c(nrow(x))
+  # iterate through each row of matrix
+  for (row in 1:nrow(x)) {
+    # store each row in a vector
+    row_values <- x[row, ]
+    # filter NA if specified
+    if (na.rm) {
+      row_values <- rm_na(row_values)
+    }
+    # calculate the values for the row and save in vector
+    mean_values[row] <- mean(row_values)
+    stdev_values[row] <- sd(row_values)
+    median_values[row] <- median(row_values)
+    min_values[row] <- min(row_values)
+    max_values[row] <- max(row_values)
+    num_lt_0_values[row] <- sum(row_values < 0)
+    num_btw_1_and_5_values[row] <- sum(row_values > 1 & row_values < 5)
+    num_na_values[row] <- sum(is.na(row_values))
+  }  
+  # create data frame with cols from vectors
+  summary <- data.frame(
+    mean = mean_values,
+    stdev = stdev_values,
+    median = median_values,
+    min = min_values,
+    max = max_values,
+    num_lt_0 = num_lt_0_values,
+    num_btw_1_and_5 = num_btw_1_and_5_values,
+    num_na = num_na_values
+  )
+  # return data frame
+  return(summary)
 }
 
 # ------------ Helper Functions Used By Assignment, You May Ignore ------------
 sample_normal <- function(n, mean=0, sd=1) {
-    return(NULL)
+  set.seed(1337)
+  samples <- rnorm(n, mean=mean, sd=sd)
+  return(samples)
 }
 
 sample_normal_w_missing <- function(n, mean=0, sd=1, missing_frac=0.1) {
-    return(NULL)
+  set.seed(1337)
+  samples <- rnorm(n, mean=mean, sd=sd)
+  missing <- rbinom(length(samples), 1, missing_frac)==1
+  samples[missing] <- NA
+  return(samples)
 }
 
 simulate_gene_expression <- function(num_samples, num_genes) {
-    return(NULL)
+  set.seed(1337)
+  gene_exp <- matrix(
+    rnbinom(num_samples*num_genes, rlnorm(num_genes,meanlog = 3), prob=runif(num_genes)),
+    nrow=num_genes
+  )
+  return(gene_exp)
 }
 
 simulate_gene_expression_w_missing <- function(num_samples, num_genes, missing_frac=0.1) {
-    return(NULL)
+  gene_exp <- simulate_gene_expression(num_samples, num_genes)
+  missing <- matrix(
+    rbinom(num_samples*num_genes, 1, missing_frac)==1,
+    nrow=num_genes
+  )
+  gene_exp[missing] <- NA
+  return(gene_exp)
 }
