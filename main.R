@@ -18,13 +18,15 @@
 #' less_than_zero(c(-1,0,1,2,3,4))
 #' [1] TRUE FALSE FALSE FALSE FALSE FALSE
 less_than_zero <- function(x) {
-  # create a vector to store the booleans
-  booleans <- vector(length = length(x))
-  # for each item in vector x, store its boolean result
-  for (i in 1:length(x)) {
-    booleans[i] = x[i]<0
-  }
-  return(booleans)
+  # # create a vector to store the booleans
+  # booleans <- vector(length = length(x))
+  # # for each item in vector x, store its boolean result
+  # for (i in 1:length(x)) {
+  #   booleans[i] = x[i]<0
+  # }
+  
+  # return boolean(s) in same data type as x
+  return(x<0)
 }
 
 #' Evaluate whether the argument is between two numbers
@@ -50,14 +52,15 @@ less_than_zero <- function(x) {
 #' [2,]  TRUE FALSE FALSE
 #' [3,] FALSE FALSE FALSE
 is_between <- function(x, a, b) {
-  # for each index in x
-  for (i in 1:length(x)) {
-    # set item equal to result of logical operators
-    # saves result as 0 or 1
-    x[i] <-  (x[i] > a) && (x[i] < b)
-  }
-  # return x as booleans
-  return(as.logical(x))
+  # # for each index in x
+  # for (i in 1:length(x)) {
+  #   # set item equal to result of logical operators
+  #   x[i] <-  (x[i] > a) & (x[i] < b)
+  # }
+  # # return x as booleans
+  
+  # return boolean(s) in same data type as x
+  return((x > a) & (x < b))
 }
 
 
